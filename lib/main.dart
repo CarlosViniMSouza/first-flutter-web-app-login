@@ -61,11 +61,31 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  void _updateFormProgress() {
+    var progress = 0.0;
+      final controllers = [
+      _firstNameTextController,
+      _lastNameTextController,
+      _usernameTextController
+    ];
+
+    for(final controller in controllers) {
+      if (controller.value.text.isNotEmpty) {
+        progress += 1 / controllers.length;
+      }
+    }
+
+    setState(() {
+      _formProgress = progress;
+    });
+  }
+
+
   final _firstNameTextController = TextEditingController();
   final _lastNameTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
 
-  final double _formProgress = 0;
+  double _formProgress = 0;
 
   void _showWelcomeScreen() {
     Navigator.of(context).pushNamed('/welcome');
@@ -74,6 +94,7 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      onChanged: _updateFormProgress,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -109,11 +130,11 @@ class _SignUpFormState extends State<SignUpForm> {
                 return states.contains(MaterialState.disabled) ? null : Colors.white;
               }),
               backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled) ? null : Colors.green;
+                return states.contains(MaterialState.disabled) ? null : Colors.blue;
               }),
             ),
-            onPressed: _showWelcomeScreen,
-            child: const Text('Inscreva-se'),
+            onPressed: _formProgress == 1 ? _showWelcomeScreen : null, // UPDATED
+            child: Text('Inscreva-se'),
           ),
         ],
       ),
